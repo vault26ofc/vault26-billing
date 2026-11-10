@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Menu, Search, PlusCircle, Home, ArrowLeft } from 'lucide-react';
+import { Menu, Search, PlusCircle, Home } from 'lucide-react';
 import { useStore } from '../../services/store';
 import { useT } from '../../i18n';
 import { LanguageSwitch } from '../common/LanguageSwitch';
@@ -24,14 +24,6 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleSidebar, onOpenSearch })
 
   const plain = 'h-11 flex items-center gap-2 px-3 border border-v26-line text-base hover:border-v26-ink transition-colors';
 
-  // Back to the previous screen; a page opened straight from a link has no
-  // previous screen in this app, so Back goes Home instead.
-  const goBack = () => {
-    const idx = (window.history.state as { idx?: number } | null)?.idx ?? 0;
-    if (idx > 0) navigate(-1);
-    else navigate('/dashboard');
-  };
-
   return (
     <header className="sticky top-0 z-30 bg-v26-paper border-t-4 border-t-v26-red border-b border-v26-line no-print select-none">
       <div className="max-w-7xl mx-auto h-16 flex items-center justify-between gap-2 px-3 sm:px-6 lg:px-8">
@@ -40,12 +32,6 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleSidebar, onOpenSearch })
             <Menu size={20} />
             <span className="hidden md:inline">{t('Menu')}</span>
           </button>
-          {!onHome && (
-            <button onClick={goBack} className={plain} aria-label={t('Back')}>
-              <ArrowLeft size={20} />
-              <span className="hidden sm:inline">{t('Back')}</span>
-            </button>
-          )}
           {!onHome && (
             <button onClick={() => navigate('/dashboard')} className={plain} aria-label={t('Home')}>
               <Home size={20} />

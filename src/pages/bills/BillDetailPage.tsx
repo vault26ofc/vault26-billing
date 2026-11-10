@@ -76,9 +76,6 @@ export const BillDetailPage: React.FC = () => {
     <div className="space-y-5">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 no-print">
         <div className="flex flex-wrap items-center gap-3">
-          <Button variant="ghost" icon={<ArrowLeft size={18} />} onClick={() => navigate('/bills')}>
-            {t('Bills')}
-          </Button>
           <h1 className="font-display text-2xl sm:text-3xl">{bill.orderNumber}</h1>
           <StatusBadge status={bill.billStatus === 'VOID' ? 'VOID' : bill.paymentStatus} />
         </div>

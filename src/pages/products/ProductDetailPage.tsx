@@ -83,9 +83,6 @@ export const ProductDetailPage: React.FC = () => {
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Button variant="ghost" icon={<ArrowLeft size={18} />} onClick={() => navigate('/products')}>
-          {t('Products')}
-        </Button>
         <div className="flex flex-wrap gap-2">
           {canTags && (
             <Button variant="secondary" icon={<Tag size={18} />} onClick={() => navigate(`/tags?productId=${product.id}`)}>

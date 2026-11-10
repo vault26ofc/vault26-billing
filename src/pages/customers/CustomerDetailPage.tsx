@@ -95,9 +95,6 @@ export const CustomerDetailPage: React.FC = () => {
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Button variant="ghost" icon={<ArrowLeft size={18} />} onClick={() => navigate('/customers')}>
-          {t('Customers')}
-        </Button>
         <div className="flex flex-wrap gap-2">
           {!isEditing && (
             <Button variant="secondary" icon={<Pencil size={18} />} onClick={startEditing}>

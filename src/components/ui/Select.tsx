@@ -176,8 +176,6 @@ export const Select: React.FC<SelectProps> = ({
     }
   };
 
-  let lastGroup: string | undefined;
-
   return (
     <div className={twMerge(clsx('w-full flex flex-col gap-1.5', className))}>
       {label && (
@@ -255,8 +253,7 @@ export const Select: React.FC<SelectProps> = ({
             >
               {visible.length === 0 && <div className="px-4 py-3 text-base text-v26-muted">{t('Nothing found.')}</div>}
               {visible.map((opt, i) => {
-                const header = opt.group && opt.group !== lastGroup ? opt.group : null;
-                lastGroup = opt.group;
+                const header = opt.group && (i === 0 || visible[i - 1].group !== opt.group) ? opt.group : null;
                 const isSel = opt.value === value;
                 return (
                   <React.Fragment key={`${opt.group || ''}|${opt.value}`}>
