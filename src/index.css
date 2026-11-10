@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    font-size: 16px;
+  }
+
+  body {
+    background-color: #f1f1f1;
+    color: #0f0f0f;
+    font-family: 'Lato', 'Noto Sans Telugu', system-ui, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  .font-display {
+    font-family: 'Imbue', 'Bodoni Moda', 'Noto Sans Telugu', Georgia, serif;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+
+  /* Telugu reads better a little larger and with more line height. */
+  html[lang='te'] body {
+    line-height: 1.65;
+  }
+
+  /* Big, clear keyboard focus for every control. */
+  :focus-visible {
+    outline: 2px solid #bb0006;
+    outline-offset: 2px;
+  }
+
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    opacity: 1;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #d9d9d9;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #4d4d4d;
+  }
+}
+
+@layer components {
+  /* A white card with a thin line - the one container used on every screen. */
+  .card {
+    @apply bg-v26-paper border border-v26-line;
+  }
+  /* Small grey label above a value or a field. */
+  .label {
+    @apply block text-sm font-bold text-v26-muted;
+  }
+  /* Section title inside a card. */
+  .section-title {
+    @apply text-base font-bold text-v26-ink;
+  }
+  .table-head {
+    @apply text-left text-sm font-bold text-v26-muted bg-v26-soft border-b border-v26-line;
+  }
+  .field {
+    @apply w-full bg-v26-paper text-v26-ink text-base px-3.5 py-2.5 border border-v26-line focus:border-v26-ink focus:outline-none;
+  }
+}
+
+/* Print: only the document, never the app around it. */
+@media print {
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .no-print,
+  aside,
+  header,
+  nav,
+  button,
+  .toast-container {
+    display: none !important;
+  }
+}
