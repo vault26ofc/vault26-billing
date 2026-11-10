@@ -520,7 +520,7 @@ export const PosBillingPage: React.FC = () => {
   const stepTitle = (n: number, text: string, right?: React.ReactNode) => (
     <div className="flex items-center justify-between gap-2 mb-3">
       <div className="flex items-center gap-2">
-        <span className="h-7 w-7 bg-v26-ink text-white text-sm font-bold flex items-center justify-center">{n}</span>
+        <span className="h-7 w-7 bg-v26-red text-white text-sm font-bold flex items-center justify-center">{n}</span>
         <span className="text-lg font-bold">{text}</span>
       </div>
       {right}

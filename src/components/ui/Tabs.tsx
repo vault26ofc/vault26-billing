@@ -28,7 +28,7 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, onChange, className
             className={clsx(
               'px-4 h-12 text-base transition-colors whitespace-nowrap flex items-center gap-2 border-b-[3px] -mb-[1px]',
               isActive
-                ? 'border-v26-ink text-v26-ink font-bold'
+                ? 'border-v26-red text-v26-ink font-bold'
                 : 'border-transparent text-v26-muted hover:text-v26-ink'
             )}
           >
@@ -37,7 +37,7 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, onChange, className
               <span
                 className={clsx(
                   'min-w-[1.75rem] px-1.5 py-0.5 text-sm text-center',
-                  isActive ? 'bg-v26-ink text-white' : 'bg-v26-soft text-v26-muted'
+                  isActive ? 'bg-v26-red text-white' : 'bg-v26-soft text-v26-muted'
                 )}
               >
                 {tab.count}

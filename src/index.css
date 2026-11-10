@@ -39,6 +39,10 @@
     outline: 2px solid #bb0006;
     outline-offset: 2px;
   }
+  /* On the red menu a red ring would vanish - use white there. */
+  aside :focus-visible {
+    outline-color: #ffffff;
+  }
 
   input[type='number']::-webkit-inner-spin-button,
   input[type='number']::-webkit-outer-spin-button {

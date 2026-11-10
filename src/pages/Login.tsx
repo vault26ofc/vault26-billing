@@ -33,7 +33,7 @@ export const Login: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-v26-page flex flex-col text-v26-ink">
-      <header className="bg-v26-paper border-b border-v26-line h-16 px-4 sm:px-8 flex items-center justify-between">
+      <header className="bg-v26-paper border-t-4 border-t-v26-red border-b border-v26-line h-16 px-4 sm:px-8 flex items-center justify-between">
         <span className="font-display text-2xl">Vault 26</span>
         <LanguageSwitch />
       </header>

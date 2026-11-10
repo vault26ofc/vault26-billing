@@ -279,7 +279,7 @@ export const Select: React.FC<SelectProps> = ({
                       )}
                     >
                       <span className="break-words">{opt.label}</span>
-                      {isSel && <Check size={20} className="shrink-0" />}
+                      {isSel && <Check size={20} className="shrink-0 text-v26-red" />}
                     </div>
                   </React.Fragment>
                 );

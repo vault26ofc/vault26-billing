@@ -86,7 +86,7 @@ export const Dashboard: React.FC = () => {
               onClick={() => navigate(tile.path)}
               className="card p-4 sm:p-5 text-left hover:border-v26-ink hover:bg-v26-soft transition-colors flex flex-col gap-3 min-h-[9.5rem]"
             >
-              <span className="text-v26-ink">{tile.icon}</span>
+              <span className="text-v26-red">{tile.icon}</span>
               <span>
                 <span className="block text-lg sm:text-xl font-bold leading-snug">{tile.title}</span>
                 <span className="block text-sm sm:text-base text-v26-muted">{tile.text}</span>

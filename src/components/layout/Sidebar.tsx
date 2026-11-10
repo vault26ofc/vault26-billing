@@ -56,34 +56,34 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenSearch 
 
   return (
     <>
-      {isOpen && <div className="fixed inset-0 bg-v26-ink/50 z-40" onClick={onClose} />}
+      {isOpen && <div className="fixed inset-0 bg-v26-ink/40 z-40" onClick={onClose} />}
 
       <aside
         aria-hidden={!isOpen}
-        className={`fixed top-0 bottom-0 left-0 z-50 w-80 max-w-[88vw] bg-v26-paper border-r border-v26-line flex flex-col transition-transform duration-200 ${
+        className={`fixed top-0 bottom-0 left-0 z-50 w-80 max-w-[88vw] bg-v26-red text-white flex flex-col transition-transform duration-200 shadow-modal ${
           isOpen ? 'translate-x-0' : '-translate-x-full invisible'
         } no-print select-none`}
       >
-        <div className="px-5 h-16 border-b border-v26-line flex items-center justify-between">
+        <div className="px-5 h-16 border-b border-white/20 flex items-center justify-between">
           <div className="flex items-baseline gap-2">
-            <span className="font-display text-2xl text-v26-ink">Vault 26</span>
-            <span className="text-sm font-bold text-v26-red">{t('Billing')}</span>
+            <span className="font-display text-2xl text-white">Vault 26</span>
+            <span className="text-sm font-bold text-white/80">{t('Billing')}</span>
           </div>
           <button
             onClick={onClose}
-            className="h-10 w-10 flex items-center justify-center text-v26-muted hover:text-v26-ink"
+            className="h-10 w-10 flex items-center justify-center text-white/80 hover:text-white hover:bg-white/10"
             aria-label={t('Close menu')}
           >
             <X size={22} />
           </button>
         </div>
 
-        <div className="p-4 border-b border-v26-line space-y-2">
+        <div className="p-4 border-b border-white/20 space-y-2">
           {can('BILLING') && (
             <NavLink
               to="/billing/new"
               onClick={onClose}
-              className="w-full h-14 bg-v26-red text-white px-4 flex items-center gap-3 text-lg font-bold hover:bg-v26-red-dark transition-colors"
+              className="w-full h-14 bg-white text-v26-red px-4 flex items-center gap-3 text-lg font-bold hover:bg-v26-page transition-colors"
             >
               <PlusCircle size={22} />
               <span>{t('New bill')}</span>
@@ -95,7 +95,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenSearch 
               onClose();
               onOpenSearch();
             }}
-            className="w-full h-11 bg-v26-paper border border-v26-line text-v26-muted px-3 flex items-center gap-2 text-base hover:text-v26-ink hover:border-v26-ink transition-colors"
+            className="w-full h-11 bg-transparent border border-white/40 text-white px-3 flex items-center gap-2 text-base hover:border-white hover:bg-white/10 transition-colors"
           >
             <Search size={18} />
             <span>{t('Search')}</span>
@@ -111,27 +111,27 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenSearch 
                 to={item.path}
                 onClick={onClose}
                 className={`flex items-center gap-3 px-3 h-12 text-base transition-colors ${
-                  active ? 'bg-v26-ink text-white font-bold' : 'text-v26-ink hover:bg-v26-soft'
+                  active ? 'bg-white text-v26-red font-bold' : 'text-white hover:bg-white/10'
                 }`}
               >
-                <span className={active ? 'text-white' : 'text-v26-muted'}>{item.icon}</span>
+                <span className={active ? 'text-v26-red' : 'text-white/80'}>{item.icon}</span>
                 <span>{item.label}</span>
               </NavLink>
             );
           })}
         </nav>
 
-        <div className="p-4 border-t border-v26-line space-y-2">
+        <div className="p-4 border-t border-white/20 space-y-2">
           {currentStaff && (
             <div className="text-sm">
-              <div className="font-bold text-v26-ink truncate">{currentStaff.name}</div>
-              <div className="text-v26-muted">{t(roleWord(currentStaff.role))}</div>
+              <div className="font-bold text-white truncate">{currentStaff.name}</div>
+              <div className="text-white/75">{t(roleWord(currentStaff.role))}</div>
             </div>
           )}
           <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() => store.reloadFromDatabase()}
-              className="h-10 border border-v26-line text-sm text-v26-ink hover:border-v26-ink flex items-center justify-center gap-1.5"
+              className="h-10 border border-white/40 text-sm text-white hover:border-white hover:bg-white/10 flex items-center justify-center gap-1.5"
             >
               <RotateCcw size={15} />
               <span>{t('Refresh')}</span>
@@ -142,7 +142,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenSearch 
                 // A full reload clears everything this login loaded before the next person signs in.
                 window.location.replace('/login');
               }}
-              className="h-10 border border-v26-line text-sm text-v26-ink hover:border-v26-ink flex items-center justify-center gap-1.5"
+              className="h-10 border border-white/40 text-sm text-white hover:border-white hover:bg-white/10 flex items-center justify-center gap-1.5"
             >
               <LogOut size={15} />
               <span>{t('Sign out')}</span>

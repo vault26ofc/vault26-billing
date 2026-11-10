@@ -33,7 +33,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleSidebar, onOpenSearch })
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-v26-paper border-b border-v26-line no-print select-none">
+    <header className="sticky top-0 z-30 bg-v26-paper border-t-4 border-t-v26-red border-b border-v26-line no-print select-none">
       <div className="max-w-7xl mx-auto h-16 flex items-center justify-between gap-2 px-3 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2 min-w-0">
           <button onClick={onToggleSidebar} className={plain} aria-label={t('Menu')}>
