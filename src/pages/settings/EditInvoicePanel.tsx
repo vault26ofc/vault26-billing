@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useStore, store } from '../../services/store';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
+import { Select } from '../../components/ui/Select';
 import { formatINR } from '../../utils/formatters';
 import { OrderItem } from '../../types';
 import { slabTaxRate, taxFor, formatRate } from '../../utils/tax';
@@ -230,21 +231,26 @@ export const EditInvoicePanel: React.FC = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-2">
-            <select value={addVariantId} onChange={(e) => setAddVariantId(e.target.value)} className="field h-11 flex-1">
-              <option value="">{t('Add an item (choose colour and size)…')}</option>
-              {products
+            <Select
+              value={addVariantId}
+              onChange={(e) => setAddVariantId(e.target.value)}
+              className="flex-1"
+              searchable
+              placeholder={t('Add an item (choose colour and size)…')}
+              aria-label={t('Add an item (choose colour and size)…')}
+              options={products
                 .filter((p) => p.variants.length > 0)
-                .map((p) => (
-                  <optgroup key={p.id} label={p.name}>
-                    {p.variants.map((v) => (
-                      <option key={v.id} value={v.id} disabled={v.stock <= 0}>
-                        {[v.color, v.size === ONE_SIZE ? t('One size') : v.size].filter(Boolean).join(' / ')} · {formatINR(v.price)} ·{' '}
-                        {v.stock <= 0 ? t('Sold out') : t('{n} in stock', { n: v.stock })}
-                      </option>
-                    ))}
-                  </optgroup>
-                ))}
-            </select>
+                .flatMap((p) =>
+                  p.variants.map((v) => ({
+                    value: v.id,
+                    group: p.name,
+                    disabled: v.stock <= 0,
+                    label: `${[v.color, v.size === ONE_SIZE ? t('One size') : v.size].filter(Boolean).join(' / ')} · ${formatINR(v.price)} · ${
+                      v.stock <= 0 ? t('Sold out') : t('{n} in stock', { n: v.stock })
+                    }`,
+                  }))
+                )}
+            />
             <Button type="button" variant="secondary" icon={<Plus size={18} />} onClick={addItem} disabled={!addVariantId}>
               {t('Add')}
             </Button>

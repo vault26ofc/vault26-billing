@@ -137,7 +137,8 @@ export async function fetchProducts(): Promise<Product[]> {
     const seen = new Set<string>();
     for (let c = categoryById.get(id); c && !seen.has(c.id); c = c.parent_id ? categoryById.get(c.parent_id) : undefined) {
       seen.add(c.id);
-      names.push(c.name);
+      // Trimmed so "yo cat" and "yo cat " (two admin entries) read as one.
+      names.push(c.name.trim());
     }
     return names;
   };
@@ -145,7 +146,7 @@ export async function fetchProducts(): Promise<Product[]> {
   return ((products || []) as DbProduct[]).map((p) => {
     const memberIds = memberIdsByProduct.get(p.id) || [];
     const mainId = p.category_id && categoryById.has(p.category_id) ? p.category_id : memberIds.find((id) => categoryById.has(id));
-    const mainName = mainId ? categoryById.get(mainId)!.name : undefined;
+    const mainName = mainId ? categoryById.get(mainId)!.name.trim() : undefined;
     const allNames = [mainId, ...memberIds].filter((id): id is string => !!id).flatMap(withParents);
     return mapProduct(p, (variants || []) as DbProductVariant[], mainName, allNames);
   });
@@ -158,7 +159,7 @@ export async function fetchCategories(): Promise<{ id: string; name: string; slu
     .eq('is_active', true)
     .order('name', { ascending: true });
   if (error) throw new Error(error.message);
-  return ((data || []) as DbCategory[]).map((c) => ({ id: c.id, name: c.name, slug: c.slug, parentId: c.parent_id }));
+  return ((data || []) as DbCategory[]).map((c) => ({ id: c.id, name: c.name.trim(), slug: c.slug, parentId: c.parent_id }));
 }
 
 function mapCustomer(c: DbPosCustomer): Customer {

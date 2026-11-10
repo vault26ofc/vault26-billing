@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useStore, store } from '../../services/store';
 import { Button } from '../../components/ui/Button';
 import { Modal } from '../../components/ui/Modal';
+import { Select } from '../../components/ui/Select';
 import { formatINR } from '../../utils/formatters';
 import { slabTaxRate, taxFor, splitCgstSgst, formatRate } from '../../utils/tax';
 import { isValidGstin, normalizeGstin } from '../../utils/gstin';
@@ -559,18 +560,14 @@ export const PosBillingPage: React.FC = () => {
                 className="field h-12 pl-11"
               />
             </div>
-            <select
+            <Select
               value={activeCategory}
               onChange={(e) => setActiveCategory(e.target.value)}
               aria-label={t('Category')}
-              className="field h-12 sm:w-56"
-            >
-              {categories.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat === 'ALL' ? t('All categories') : cat}
-                </option>
-              ))}
-            </select>
+              className="sm:w-60"
+              buttonClassName="h-12"
+              options={categories.map((cat) => ({ value: cat, label: cat === 'ALL' ? t('All categories') : cat }))}
+            />
           </div>
 
           {filteredProducts.length === 0 ? (
@@ -893,13 +890,15 @@ export const PosBillingPage: React.FC = () => {
                   aria-label={t('Discount')}
                   className="field h-11"
                 />
-                <select value={discountReason} onChange={(e) => setDiscountReason(e.target.value)} className="field h-11" aria-label={t('Reason')}>
-                  {DISCOUNT_REASONS.map((reason) => (
-                    <option key={reason} value={reason}>
-                      {reason === 'NONE' ? t('Reason (optional)') : reason === 'CUSTOM' ? t('Other reason…') : t(reason)}
-                    </option>
-                  ))}
-                </select>
+                <Select
+                  value={discountReason}
+                  onChange={(e) => setDiscountReason(e.target.value)}
+                  aria-label={t('Reason')}
+                  options={DISCOUNT_REASONS.map((reason) => ({
+                    value: reason,
+                    label: reason === 'NONE' ? t('Reason (optional)') : reason === 'CUSTOM' ? t('Other reason…') : t(reason),
+                  }))}
+                />
                 {discountReason === 'CUSTOM' && (
                   <input
                     type="text"
@@ -1018,18 +1017,13 @@ export const PosBillingPage: React.FC = () => {
               <div className="space-y-2">
                 {paymentSplits.map((split) => (
                   <div key={split.id} className="flex items-center gap-2">
-                    <select
+                    <Select
                       value={split.method}
                       onChange={(e) => handleUpdateSplit(split.id, { method: e.target.value as Method })}
-                      className="field h-11 w-32"
+                      className="w-36 shrink-0"
                       aria-label={t('Paid by')}
-                    >
-                      {METHODS.map((m) => (
-                        <option key={m} value={m}>
-                          {t(methodWord(m))}
-                        </option>
-                      ))}
-                    </select>
+                      options={METHODS.map((m) => ({ value: m, label: t(methodWord(m)) }))}
+                    />
                     <input
                       type="number"
                       min="0"

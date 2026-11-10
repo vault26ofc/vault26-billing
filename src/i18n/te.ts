@@ -85,6 +85,7 @@ export const te: Record<string, string> = {
   'Check the details': 'వివరాలు సరిచూడండి',
   'Checked': 'చెక్ చేశారు',
   'Choose a colour first.': 'ముందు కలర్ ఎంచుకోండి.',
+  'Choose…': 'ఎంచుకోండి…',
   'Choose a product, check the sizes, print.': 'ప్రొడక్ట్ ఎంచుకోండి, సైజులు చూడండి, ప్రింట్ చేయండి.',
   'Choose another bill': 'వేరే బిల్ ఎంచుకోండి',
   'Choose colour, then size': 'ముందు కలర్, తర్వాత సైజ్ ఎంచుకోండి',
