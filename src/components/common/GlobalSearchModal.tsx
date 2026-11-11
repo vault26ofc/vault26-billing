@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../../services/store';
 import { Search, X, ArrowRight, Shirt, Users, Receipt } from 'lucide-react';
 import { formatINR } from '../../utils/formatters';
 import { useT } from '../../i18n';
+import { useScrollLock } from '../../utils/useScrollLock';
 
 interface SearchResult {
   id: string;
@@ -18,6 +19,11 @@ interface GlobalSearchModalProps {
   onClose: () => void;
 }
 
+// How many results to list. With nothing typed: the latest few of each kind.
+// While typing: every match up to MAX_MATCHES; the list scrolls inside the box.
+const PREVIEW_EACH = 5;
+const MAX_MATCHES = 50;
+
 // One search box for bills, products (and their codes) and customers.
 export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, onClose }) => {
   const [query, setQuery] = useState('');
@@ -25,6 +31,12 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
   const navigate = useNavigate();
   const { products, orders, customers } = useStore();
   const t = useT();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+  const lastPointer = useRef<{ x: number; y: number } | null>(null);
+
+  // The page behind stays still while the search is open.
+  useScrollLock(isOpen);
 
   useEffect(() => {
     if (isOpen) {
@@ -58,7 +70,11 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
     });
 
     if (!q) {
-      return [...orders.slice(0, 3).map(bill), ...products.slice(0, 3).map(product), ...customers.slice(0, 2).map(customer)];
+      return [
+        ...orders.slice(0, PREVIEW_EACH).map(bill),
+        ...products.slice(0, PREVIEW_EACH).map(product),
+        ...customers.slice(0, PREVIEW_EACH).map(customer),
+      ];
     }
 
     const matched: SearchResult[] = [];
@@ -82,32 +98,61 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
         matched.push(customer(c));
       }
     });
-    return matched.slice(0, 10);
+    return matched.slice(0, MAX_MATCHES);
   }, [query, products, orders, customers, t]);
 
   useEffect(() => {
     setSelectedIndex(0);
+    if (listRef.current) listRef.current.scrollTop = 0;
   }, [results]);
 
-  const handleSelect = (result: SearchResult) => {
-    navigate(result.url);
-    onClose();
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      setSelectedIndex((prev) => (prev + 1) % Math.max(1, results.length));
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      setSelectedIndex((prev) => (prev - 1 + results.length) % Math.max(1, results.length));
-    } else if (e.key === 'Enter') {
-      e.preventDefault();
-      if (results[selectedIndex]) handleSelect(results[selectedIndex]);
-    } else if (e.key === 'Escape') {
+  const handleSelect = useCallback(
+    (result: SearchResult) => {
+      navigate(result.url);
       onClose();
-    }
-  };
+    },
+    [navigate, onClose]
+  );
+
+  // Arrow keys, Enter and Esc work wherever the focus is while the search is
+  // open - not only inside the text box. Before, one click anywhere in the box
+  // sent the arrows to the page behind, which scrolled instead.
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      // Still picking a letter on a Telugu (or other) keyboard: not ours yet.
+      if (e.isComposing) return;
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        const n = results.length;
+        if (n === 0) return;
+        setSelectedIndex((prev) => (e.key === 'ArrowDown' ? (prev + 1) % n : (prev - 1 + n) % n));
+        inputRef.current?.focus({ preventScroll: true });
+      } else if (e.key === 'Enter') {
+        // A button reached with Tab (Close, or a result) keeps its own Enter.
+        const target = e.target as HTMLElement | null;
+        if (target && target !== inputRef.current && target.tagName === 'BUTTON') return;
+        e.preventDefault();
+        if (results[selectedIndex]) handleSelect(results[selectedIndex]);
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isOpen, results, selectedIndex, handleSelect, onClose]);
+
+  // Keep the highlighted result in sight when the arrows move past the edge.
+  useEffect(() => {
+    const list = listRef.current;
+    const el = list?.querySelector<HTMLElement>(`[data-index="${selectedIndex}"]`);
+    if (!list || !el) return;
+    const top = el.offsetTop;
+    const bottom = top + el.offsetHeight;
+    if (top < list.scrollTop) list.scrollTop = top - 8;
+    else if (bottom > list.scrollTop + list.clientHeight) list.scrollTop = bottom - list.clientHeight + 8;
+  }, [selectedIndex]);
 
   if (!isOpen) return null;
 
@@ -121,16 +166,29 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
         aria-label={t('Search')}
         className="w-full max-w-2xl bg-v26-paper border border-v26-ink shadow-modal flex flex-col overflow-hidden max-h-[85vh]"
         onClick={(e) => e.stopPropagation()}
+        onMouseDown={(e) => {
+          // Clicking inside the box keeps the cursor in the text box, so typing
+          // and the arrow keys carry on. The result list itself is left alone
+          // so its scrollbar can still be dragged.
+          if (e.target !== inputRef.current && e.target !== listRef.current) e.preventDefault();
+        }}
       >
         <div className="p-3 border-b border-v26-line flex items-center gap-2">
           <Search size={22} className="text-v26-muted shrink-0 ml-1" />
+          {/* type="text", not "search": a search box adds the browser's own
+              clear cross next to our Close cross - two crosses. */}
           <input
+            ref={inputRef}
             autoFocus
-            type="search"
+            type="text"
+            inputMode="search"
+            enterKeyHint="search"
+            autoComplete="off"
+            spellCheck={false}
+            aria-label={t('Search')}
             placeholder={t('Type a bill no., product, phone or name')}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={handleKeyDown}
             className="w-full h-12 bg-transparent text-lg focus:outline-none placeholder:text-[#8A8A8A]"
           />
           <button
@@ -143,7 +201,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
           </button>
         </div>
 
-        <div className="overflow-y-auto flex-1 p-2 space-y-1">
+        <div ref={listRef} className="relative overflow-y-auto overscroll-contain flex-1 min-h-0 p-2 space-y-1">
           {results.length === 0 ? (
             <div className="py-12 text-center text-base text-v26-muted">{t('Nothing found.')}</div>
           ) : (
@@ -153,10 +211,19 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
                 <button
                   type="button"
                   key={`${item.type}-${item.id}`}
+                  data-index={idx}
                   onClick={() => handleSelect(item)}
-                  onMouseEnter={() => setSelectedIndex(idx)}
+                  onMouseMove={(e) => {
+                    // Only a real mouse move picks a row. When the arrow keys
+                    // scroll the list under a still mouse, the row under it
+                    // must not steal the highlight back.
+                    const last = lastPointer.current;
+                    if (last && last.x === e.clientX && last.y === e.clientY) return;
+                    lastPointer.current = { x: e.clientX, y: e.clientY };
+                    if (!isSelected) setSelectedIndex(idx);
+                  }}
                   className={`w-full text-left p-3 flex items-center justify-between gap-3 transition-colors ${
-                    isSelected ? 'bg-v26-ink text-white' : 'hover:bg-v26-soft text-v26-ink'
+                    isSelected ? 'bg-v26-ink text-white' : 'text-v26-ink'
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">

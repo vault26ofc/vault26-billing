@@ -20,6 +20,7 @@ import { PermissionKey } from '../../constants/permissions';
 import { signOut } from '../../api/auth';
 import { useT } from '../../i18n';
 import { roleWord } from '../../utils/roleWord';
+import { useScrollLock } from '../../utils/useScrollLock';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -32,6 +33,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenSearch 
   const location = useLocation();
   const { currentStaff } = useStore();
   const t = useT();
+  // The page behind stays still while the menu is open.
+  useScrollLock(isOpen);
 
   const allNavItems: Array<{ label: string; path: string; icon: React.ReactNode; permission: PermissionKey }> = [
     { label: t('Home'), path: '/dashboard', icon: <LayoutDashboard size={20} />, permission: 'DASHBOARD' },

@@ -3,6 +3,7 @@ import { X } from 'lucide-react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useT } from '../../i18n';
+import { useScrollLock } from '../../utils/useScrollLock';
 
 interface ModalProps {
   isOpen: boolean;
@@ -16,6 +17,8 @@ interface ModalProps {
 
 export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, subtitle, children, footer, maxWidth = 'md' }) => {
   const t = useT();
+  // The page behind stays still while this pop-up is open.
+  useScrollLock(isOpen);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
