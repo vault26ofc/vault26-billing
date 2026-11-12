@@ -7,6 +7,7 @@ import { signIn } from '../api/auth';
 import { ArrowRight, Loader2 } from 'lucide-react';
 import { useT } from '../i18n';
 import { LanguageSwitch } from '../components/common/LanguageSwitch';
+import { MadeBy } from '../components/common/MadeBy';
 
 export const Login: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -87,6 +88,7 @@ export const Login: React.FC = () => {
           </form>
         </div>
       </main>
+      <MadeBy />
     </div>
   );
 };

@@ -6,6 +6,7 @@ import { GlobalSearchModal } from '../common/GlobalSearchModal';
 import { QuickNewModal } from '../common/QuickNewModal';
 import { ToastContainer } from '../ui/ToastContainer';
 import { BackLink } from './BackLink';
+import { MadeBy } from '../common/MadeBy';
 
 export const AppLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -56,6 +57,7 @@ export const AppLayout: React.FC = () => {
           <BackLink />
           <Outlet />
         </main>
+        <MadeBy />
       </div>
 
       {/* Global Modals & Notifications */}
